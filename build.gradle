@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id "jacoco"
-    id 'info.solidsoft.pitest' version '1.7.4'
+    id 'info.solidsoft.pitest' version '1.15.0'
 }
 
 group = 're.forestier.edu'
@@ -13,16 +13,47 @@ repositories {
 
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
-    testImplementation 'org.pitest:pitest-junit5-plugin:0.12'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+
+    testImplementation 'org.pitest:pitest-junit5-plugin:1.2.0'
     testImplementation("com.approvaltests:approvaltests:15.6.0")
     implementation 'org.hamcrest:hamcrest:2.2'
-    implementation("org.freemarker:freemarker:2.3.30")
-
-
+    implementation("org.freemarker:freemarker:2.3.32")
 }
 
 test {
     useJUnitPlatform()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+pitest {
+    targetClasses = ['re.forestier.edu.*']
+    targetTests = ['re.forestier.edu.*']
+
+    pitestVersion = '1.15.3'  // Version PIT compatible Java 21
+    junit5PluginVersion = '1.2.0'
+
+    threads = 4
+    outputFormats = ['HTML', 'XML']
+    timestampedReports = false
+
+    mutators = ['DEFAULTS']
+}
+
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+    }
 }
